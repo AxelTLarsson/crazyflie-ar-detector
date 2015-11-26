@@ -89,8 +89,8 @@ static void help() {
 /**
  */
 static bool isParam(string param, int argc, char **argv) {
-    for(int i = 0; i < argc; i++)
-        if(string(argv[i]) == param) return true;
+    for (int i = 0; i < argc; i++)
+        if (string(argv[i]) == param) return true;
     return false;
 }
 
@@ -99,9 +99,9 @@ static bool isParam(string param, int argc, char **argv) {
  */
 static string getParam(string param, int argc, char **argv, string defvalue = "") {
     int idx = -1;
-    for(int i = 0; i < argc && idx == -1; i++)
-        if(string(argv[i]) == param) idx = i;
-    if(idx == -1 || (idx + 1) >= argc)
+    for (int i = 0; i < argc && idx == -1; i++)
+        if (string(argv[i]) == param) idx = i;
+    if (idx == -1 || (idx + 1) >= argc)
         return defvalue;
     else
         return argv[idx + 1];
@@ -113,7 +113,7 @@ static string getParam(string param, int argc, char **argv, string defvalue = ""
  */
 static bool readCameraParameters(string filename, Mat &camMatrix, Mat &distCoeffs) {
     FileStorage fs(filename, FileStorage::READ);
-    if(!fs.isOpened())
+    if (!fs.isOpened())
         return false;
     fs["camera_matrix"] >> camMatrix;
     fs["distortion_coefficients"] >> distCoeffs;
@@ -126,7 +126,7 @@ static bool readCameraParameters(string filename, Mat &camMatrix, Mat &distCoeff
  */
 static bool readDetectorParameters(string filename, aruco::DetectorParameters &params) {
     FileStorage fs(filename, FileStorage::READ);
-    if(!fs.isOpened())
+    if (!fs.isOpened())
         return false;
     fs["adaptiveThreshWinSizeMin"] >> params.adaptiveThreshWinSizeMin;
     fs["adaptiveThreshWinSizeMax"] >> params.adaptiveThreshWinSizeMax;
@@ -175,34 +175,34 @@ int main(int argc, char *argv[]) {
     int rc = zmq_bind (controller, "tcp://*:7777");
     assert (rc == 0);
 
-    if(!isParam("-d", argc, argv) && !isParam("-conf", argc, argv)) {
+    if (!isParam("-d", argc, argv) && !isParam("-conf", argc, argv)) {
         help();
         return 0;
     }
 
     if (isParam("-conf", argc, argv)) {
-      conf = FileStorage(getParam("-conf", argc, argv), FileStorage::READ);
-      has_conf = true;
+        conf = FileStorage(getParam("-conf", argc, argv), FileStorage::READ);
+        has_conf = true;
 
-      fromTop = (int)conf["camera_top"] != 0;
+        fromTop = (int)conf["camera_top"] != 0;
     }
 
     int dictionaryId = 0;
     if (has_conf) {
-      conf["marker_dictionary"] >> dictionaryId;
+        conf["marker_dictionary"] >> dictionaryId;
     } else {
-      dictionaryId = atoi(getParam("-d", argc, argv).c_str());
+        dictionaryId = atoi(getParam("-d", argc, argv).c_str());
     }
     aruco::Dictionary dictionary =
         aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
 
     if (has_conf) {
-      marker_id = conf["marker_id"];
-      cout << "Detecting marker ID " << marker_id << endl;
+        marker_id = conf["marker_id"];
+        cout << "Detecting marker ID " << marker_id << endl;
     }
 
     bool showRejected = false;
-    if(isParam("-r", argc, argv)) showRejected = true;
+    if (isParam("-r", argc, argv)) showRejected = true;
 
     bool estimatePose = false;
     Mat camMatrix, distCoeffs;
@@ -214,14 +214,14 @@ int main(int argc, char *argv[]) {
         fullPath.append(filename);
 
         bool readOk = readCameraParameters(fullPath, camMatrix, distCoeffs);
-        if(!readOk) {
+        if (!readOk) {
             cerr << "Invalid camera file" << endl;
             return 0;
         }
         estimatePose = true;
-    } else if(isParam("-c", argc, argv)) {
+    } else if (isParam("-c", argc, argv)) {
         bool readOk = readCameraParameters(getParam("-c", argc, argv), camMatrix, distCoeffs);
-        if(!readOk) {
+        if (!readOk) {
             cerr << "Invalid camera file" << endl;
             return 0;
         }
@@ -230,15 +230,15 @@ int main(int argc, char *argv[]) {
 
     float markerLength = 0;
     if (has_conf) {
-      markerLength = conf["marker_length"];
+        markerLength = conf["marker_length"];
     } else {
-      markerLength = (float)atof(getParam("-l", argc, argv, "0.1").c_str());
+        markerLength = (float)atof(getParam("-l", argc, argv, "0.1").c_str());
     }
 
     aruco::DetectorParameters detectorParams;
-    if(isParam("-dp", argc, argv)) {
+    if (isParam("-dp", argc, argv)) {
         bool readOk = readDetectorParameters(getParam("-dp", argc, argv), detectorParams);
-        if(!readOk) {
+        if (!readOk) {
             cerr << "Invalid detector parameters file" << endl;
             return 0;
         }
@@ -247,12 +247,12 @@ int main(int argc, char *argv[]) {
 
     VideoCapture inputVideo;
     int waitTime;
-    if(isParam("-v", argc, argv)) {
+    if (isParam("-v", argc, argv)) {
         inputVideo.open(getParam("-v", argc, argv));
         waitTime = 0;
     } else {
         int camId = 0;
-        if(isParam("-ci", argc, argv)) camId = atoi(getParam("-ci", argc, argv).c_str());
+        if (isParam("-ci", argc, argv)) camId = atoi(getParam("-ci", argc, argv).c_str());
         inputVideo.open(camId);
         waitTime = 10;
     }
@@ -260,20 +260,20 @@ int main(int argc, char *argv[]) {
     ofstream logfile;
     bool haslog = false;
     if (isParam("-L", argc, argv)) {
-      logfile.open(getParam("-L", argc, argv).c_str());
-      logfile << "x, y, z, angle" << endl;
-      haslog = true;
+        logfile.open(getParam("-L", argc, argv).c_str());
+        logfile << "x, y, z, angle" << endl;
+        haslog = true;
     }
 
-    inputVideo.set(CV_CAP_PROP_FOURCC,CV_FOURCC('Y','C','Y','V'));
+    inputVideo.set(CV_CAP_PROP_FOURCC, CV_FOURCC('Y', 'C', 'Y', 'V'));
     inputVideo.set(CAP_PROP_FPS, 30);
-    inputVideo.set(CAP_PROP_FRAME_WIDTH,640);
-    inputVideo.set(CAP_PROP_FRAME_HEIGHT,480);
+    inputVideo.set(CAP_PROP_FRAME_WIDTH, 640);
+    inputVideo.set(CAP_PROP_FRAME_HEIGHT, 480);
 
     double totalTime = 0;
     int totalIterations = 0;
 
-    while(inputVideo.grab()) {
+    while (inputVideo.grab()) {
         Mat image, imageCopy;
         inputVideo.retrieve(image);
 
@@ -281,53 +281,50 @@ int main(int argc, char *argv[]) {
 
         vector< int > ids;
         vector< vector< Point2f > > corners, rejected;
-        vector< Mat > rvecs, tvecs;
+        vector< Vec3d > rvecs, tvecs;
 
         // detect markers and estimate pose
         aruco::detectMarkers(image, dictionary, corners, ids, detectorParams, rejected);
-        if(estimatePose && ids.size() > 0) {
-          aruco::estimatePoseSingleMarkers(corners, markerLength, camMatrix, distCoeffs, rvecs,
-                                           tvecs);
-        }
+        if (estimatePose && ids.size() > 0)
+            aruco::estimatePoseSingleMarkers(corners, markerLength, camMatrix, distCoeffs, rvecs,
+                                             tvecs);
 
         double currentTime = ((double)getTickCount() - tick) / getTickFrequency();
         totalTime += currentTime;
         totalIterations++;
-        if(totalIterations % 30 == 0) {
+        if (totalIterations % 30 == 0) {
             cout << "Detection Time = " << currentTime * 1000 << " ms "
                  << "(Mean = " << 1000 * totalTime / double(totalIterations) << " ms)" << endl;
         }
 
         // draw results
         image.copyTo(imageCopy);
-        if(ids.size() > 0) {
+        if (ids.size() > 0) {
             aruco::drawDetectedMarkers(imageCopy, corners, ids);
 
-            if(estimatePose) {
-                for(unsigned int i = 0; i < ids.size(); i++)
+            if (estimatePose) {
+                for (unsigned int i = 0; i < ids.size(); i++)
                     aruco::drawAxis(imageCopy, camMatrix, distCoeffs, rvecs[i], tvecs[i],
                                     markerLength * 0.5f);
-            } else {
-              cout << "Warning: camera calib not available, no pose calculation!" << endl;
             }
         }
 
-        if(showRejected && rejected.size() > 0)
+        if (showRejected && rejected.size() > 0)
             aruco::drawDetectedMarkers(imageCopy, rejected, noArray(), Scalar(100, 0, 255));
 
+        //fps string
         float t = getTickCount();
-        float fps = getTickFrequency()/(t-frameTime);
+        float fps = getTickFrequency() / (t - frameTime);
         frameTime = t;
         {
-          std::ostringstream str;
-          str << "Fps:" << fps;
-          putText(imageCopy, str.str(), Point(10,30), CV_FONT_HERSHEY_PLAIN, 3, Scalar(0,0,250));
+            std::ostringstream str;
+            str << "Fps:" << fps;
+            putText(imageCopy, str.str(), Point(10, 30), CV_FONT_HERSHEY_PLAIN, 3, Scalar(0, 0, 250));
         }
-
 
         imshow("out", imageCopy);
         char key = (char)waitKey(waitTime);
-        if(key == 27) break;
+        if (key == 27) break;
 
 
         Mat ground = Mat::zeros(3, 1, CV_64F);
@@ -338,68 +335,68 @@ int main(int argc, char *argv[]) {
 
         char buffer[255];
         // Assuming there is only one tag, sending its position via ZMQ
-        if (ids.size()>0 && (marker_id==0 || ids[0] == marker_id) && estimatePose) {
+        if (ids.size() > 0 && (marker_id == 0 || ids[0] == marker_id) && estimatePose) {
 
-          angle = atan2((corners[0][0].y-corners[0][2].y), (corners[0][2].x-corners[0][0].x))*180/M_PI;
-          angle += 45;
+            angle = atan2((corners[0][0].y - corners[0][2].y), (corners[0][2].x - corners[0][0].x)) * 180 / M_PI;
+            angle += 45;
 
-          pos_x = tvecs[0].at<double>(0);
-          pos_y = tvecs[0].at<double>(1);
-          pos_z = tvecs[0].at<double>(2);
+// this is what was causing trouble along with tvecks being a Mat instead of Vec3d as it should be.          pos_x = tvecs[0].val[0];
+            pos_y = tvecs[0].val[1];
+            pos_z = tvecs[0].val[2];
 
-          if (fromTop) {
-            //pos_x = pos_x;
-            pos_y = -pos_y;
-            pos_z = -pos_z;
-            angle = -angle;
-          }
+            if (fromTop) {
+                //pos_x = pos_x;
+                pos_y = -pos_y;
+                pos_z = -pos_z;
+                angle = -angle;
+            }
 
-          printf("Detected marker %d: %f, %f, %f, %f\n", ids[0], pos_x, pos_y, pos_z, angle);
-          sprintf(buffer, "{\"pos\": [%f, %f, %f], \"angle\": %f, \"detect\": true}", pos_x, pos_y, pos_z, angle);
-          zmq_send(controller, buffer, strlen(buffer), ZMQ_DONTWAIT);
+            printf("Detected marker %d: %f, %f, %f, %f\n", ids[0], pos_x, pos_y, pos_z, angle);
+            sprintf(buffer, "{\"pos\": [%f, %f, %f], \"angle\": %f, \"detect\": true}", pos_x, pos_y, pos_z, angle);
+            zmq_send(controller, buffer, strlen(buffer), ZMQ_DONTWAIT);
 
-          if (haslog) {
-            logfile << pos_x << ", " << pos_y << ", " << pos_z << ", " << angle << endl;
-          }
+            if (haslog) {
+                logfile << pos_x << ", " << pos_y << ", " << pos_z << ", " << angle << endl;
+            }
         } else {
-          sprintf(buffer, "{\"pos\": [%f, %f, %f], \"angle\": %f, \"detect\": false}", pos_x, pos_y, pos_z, angle);
-          zmq_send(controller, buffer, strlen(buffer), ZMQ_DONTWAIT);
-          if (haslog) {
-            logfile << "0, 0, 0, 0" << endl;
-          }
+            sprintf(buffer, "{\"pos\": [%f, %f, %f], \"angle\": %f, \"detect\": false}", pos_x, pos_y, pos_z, angle);
+            zmq_send(controller, buffer, strlen(buffer), ZMQ_DONTWAIT);
+            if (haslog) {
+                logfile << "0, 0, 0, 0" << endl;
+            }
         }
 
-        // Calulate difference between ground and copter
-        for (int i=0; i<ids.size(); i++) {
-          if (ids[i] == 0) {
-            cx = tvecs[i].at<double>(0);
-            cy = tvecs[i].at<double>(1);
-            cz = tvecs[i].at<double>(2);
-            printf("%f\t%f\t%f\n", cx, cy, cz);
-            copter = tvecs[i].clone();
-            detect ++;
-          } else if (ids[i] == 1) {
-            gx = tvecs[i].at<double>(0);
-            gy = tvecs[i].at<double>(1);
-            gz = tvecs[i].at<double>(2);
-            printf("%f\t%f\t%f\n", gx, gy, gz);
-            ground = tvecs[i].clone();
-            Rodrigues(rvecs[i], groundRot);
+        // // Calulate difference between ground and copter
+        // for (int i=0; i<ids.size(); i++) {
+        //   if (ids[i] == 0) {
+        //     cx = tvecs[i].at<double>(0);
+        //     cy = tvecs[i].at<double>(1);
+        //     cz = tvecs[i].at<double>(2);
+        //     printf("%f\t%f\t%f\n", cx, cy, cz);
+        //     copter = tvecs[i].clone();
+        //     detect ++;
+        //   } else if (ids[i] == 1) {
+        //     gx = tvecs[i].at<double>(0);
+        //     gy = tvecs[i].at<double>(1);
+        //     gz = tvecs[i].at<double>(2);
+        //     printf("%f\t%f\t%f\n", gx, gy, gz);
+        //     ground = tvecs[i].clone();
+        //     Rodrigues(rvecs[i], groundRot);
 
-            detect ++;
-          }
-        }
+        //     detect ++;
+        //   }
+        // }
 
-        if (detect >= 2) {
-          Mat diff = copter - ground;
-          cout << diff << endl;
-          diff = groundRot * diff;
-        }
+        // if (detect >= 2) {
+        //   Mat diff = copter - ground;
+        //   cout << diff << endl;
+        //   diff = groundRot * diff;
+        // }
 
     }
 
     if (haslog) {
-      logfile.close();
+        logfile.close();
     }
 
     return 0;
