@@ -327,9 +327,9 @@ int main(int argc, char *argv[]) {
                 if (key == 27) break;
 
 
-                Mat ground = Mat::zeros(3, 1, CV_64F);
-                Mat groundRot = Mat::zeros(3, 3, CV_64F);
-                Mat copter = Mat::zeros(3, 1, CV_64F);
+                Vec3d ground(0,0,0);
+                Vec3d groundRot(0,0,0);
+                Vec3d copter(0,0,0);
 
                 int detect = 0;
 
@@ -379,15 +379,18 @@ int main(int argc, char *argv[]) {
                         gy = tvecs[i].val[1];
                         gz = tvecs[i].val[2];
                         memcpy (&ground, &tvecs[i], sizeof(tvecs[i]));
-                        Rodrigues(rvecs[i], groundRot);
+                        //Rodrigues(rvecs[i], groundRot);
                         detect ++;
                     }
                 }
 
                 if (detect >= 2) {
-                    Mat diff = copter - ground;
-                    cout << diff << endl;
-                    diff = groundRot * diff;
+                    Vec3d diff = copter - ground;
+                    // spams the diff, might be and idea to send this instead of the camera relative pos. 
+                    //cout << diff << endl;
+
+                    // should not be needed since we arleady have the vector, this is from old matrix implementation
+                    //diff = groundRot * diff;
                 }
 
             }
