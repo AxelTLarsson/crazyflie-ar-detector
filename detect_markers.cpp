@@ -366,32 +366,29 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        // // Calulate difference between ground and copter
-        // for (int i=0; i<ids.size(); i++) {
-        //   if (ids[i] == 0) {
-        //     cx = tvecs[i].at<double>(0);
-        //     cy = tvecs[i].at<double>(1);
-        //     cz = tvecs[i].at<double>(2);
-        //     printf("%f\t%f\t%f\n", cx, cy, cz);
-        //     copter = tvecs[i].clone();
-        //     detect ++;
-        //   } else if (ids[i] == 1) {
-        //     gx = tvecs[i].at<double>(0);
-        //     gy = tvecs[i].at<double>(1);
-        //     gz = tvecs[i].at<double>(2);
-        //     printf("%f\t%f\t%f\n", gx, gy, gz);
-        //     ground = tvecs[i].clone();
-        //     Rodrigues(rvecs[i], groundRot);
+         // Calulate difference between ground and copter
+         for (int i=0; i<ids.size(); i++) {
+           if (ids[i] == 0) {
+             cx = tvecs[i].val[0];
+             cy = tvecs[i].val[1];
+             cz = tvecs[i].val[2];
+             memcpy (&copter, &tvecs[i], sizeof(tvecs[i]));
+             detect ++;
+           } else if (ids[i] == 1) {
+             gx = tvecs[i].val[0];
+             gy = tvecs[i].val[1];
+             gz = tvecs[i].val[2];
+             memcpy (&ground, &tvecs[i], sizeof(tvecs[i]));
+             Rodrigues(rvecs[i], groundRot);
+             detect ++;
+           }
+         }
 
-        //     detect ++;
-        //   }
-        // }
-
-        // if (detect >= 2) {
-        //   Mat diff = copter - ground;
-        //   cout << diff << endl;
-        //   diff = groundRot * diff;
-        // }
+         if (detect >= 2) {
+           Mat diff = copter - ground;
+           cout << diff << endl;
+           diff = groundRot * diff;
+         }
 
     }
 
