@@ -127,7 +127,7 @@ static bool readCameraParameters(string filename, Mat &camMatrix, Mat &distCoeff
 static bool readDetectorParameters(string filename, aruco::DetectorParameters &params) {
     FileStorage fs(filename, FileStorage::READ);
     if (!fs.isOpened())
-    return false;g
+    return false;
     fs["adaptiveThreshWinSizeMin"] >> params.adaptiveThreshWinSizeMin;
     fs["adaptiveThreshWinSizeMax"] >> params.adaptiveThreshWinSizeMax;
     fs["adaptiveThreshWinSizeStep"] >> params.adaptiveThreshWinSizeStep;
