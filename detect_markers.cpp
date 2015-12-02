@@ -254,6 +254,7 @@ int main(int argc, char *argv[]) {
         int camId = 0;
         if (isParam("-ci", argc, argv)) camId = atoi(getParam("-ci", argc, argv).c_str());
         inputVideo.open(camId);
+        cout << "The camera id is: " << camId << endl;
         waitTime = 10;
     }
 
@@ -360,7 +361,7 @@ int main(int argc, char *argv[]) {
                     }
                 } else {
                     sprintf(buffer, "{\"pos\": [%f, %f, %f], \"angle\": %f, \"detect\": false}", pos_x, pos_y, pos_z, angle);
-                    zmq_send(controller, buffer, strlen(buffer), ZMQ_DONTWAIT);
+                    //zmq_send(controller, buffer, strlen(buffer), ZMQ_DONTWAIT);
                     if (haslog) {
                         logfile << "0, 0, 0, 0" << endl;
                     }
