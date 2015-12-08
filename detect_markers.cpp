@@ -341,7 +341,8 @@ int main(int argc, char *argv[]) {
                     angle = atan2((corners[0][0].y - corners[0][2].y), (corners[0][2].x - corners[0][0].x)) * 180 / M_PI;
                     angle += 45;
 
-                    // this is what was causing trouble along with tvecks being a Mat instead of Vec3d as it should be.          pos_x = tvecs[0].val[0];
+                    // this is what was causing trouble along with tvecks being a Mat instead of Vec3d as it should be.          
+                    pos_x = tvecs[0].val[0];
                     pos_y = tvecs[0].val[1];
                     pos_z = tvecs[0].val[2];
 
