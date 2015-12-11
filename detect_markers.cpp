@@ -341,7 +341,7 @@ int main(int argc, char *argv[]) {
                     angle = atan2((corners[0][0].y - corners[0][2].y), (corners[0][2].x - corners[0][0].x)) * 180 / M_PI;
                     angle += 45;
 
-                    // this is what was causing trouble along with tvecks being a Mat instead of Vec3d as it should be.          
+                    // this is what was causing trouble along with tvecks being a Mat instead of Vec3d as it should be.
                     pos_x = tvecs[0].val[0];
                     pos_y = tvecs[0].val[1];
                     pos_z = tvecs[0].val[2];
@@ -354,7 +354,7 @@ int main(int argc, char *argv[]) {
                     }
 
                     printf("Detected marker %d: %f, %f, %f, %f\n", ids[0], pos_x, pos_y, pos_z, angle);
-                    sprintf(buffer, "{\"pos\": [%f, %f, %f], \"angle\": %f, \"detect\": true}", pos_x, pos_y, pos_z, angle);
+                    sprintf(buffer, "{\"id\": %d, \"pos\": [%f, %f, %f], \"angle\": %f, \"detect\": true}", ids[0], pos_x, pos_y, pos_z, angle);
                     zmq_send(controller, buffer, strlen(buffer), ZMQ_DONTWAIT);
 
                     if (haslog) {
@@ -388,7 +388,7 @@ int main(int argc, char *argv[]) {
 
                 if (detect >= 2) {
                     Vec3d diff = copter - ground;
-                    // spams the diff, might be and idea to send this instead of the camera relative pos. 
+                    // spams the diff, might be and idea to send this instead of the camera relative pos.
                     //cout << diff << endl;
 
                     // should not be needed since we arleady have the vector, this is from old matrix implementation
