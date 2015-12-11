@@ -1,5 +1,5 @@
 %YAML:1.0
-camera_calib: "facetimehd.yml"   # Path is relative to this file location
+camera_calib: "c920-2.yml"   # Path is relative to this file location
 
 # Marker to be tracked
 marker_dictionary: 0
@@ -7,4 +7,4 @@ marker_id: 1
 marker_length: 0.35
 
 # Camera position
-camera_top: 1
+camera_top: 0

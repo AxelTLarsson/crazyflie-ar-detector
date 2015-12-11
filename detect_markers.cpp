@@ -335,16 +335,15 @@ int main(int argc, char *argv[]) {
                 int detect = 0;
 
                 char buffer[255];
-                // Assuming there is only one tag, sending its position via ZMQ
-                if (ids.size() > 0 && (marker_id == 0 || ids[0] == marker_id) && estimatePose) {
+                for (int i=0; i<ids.size(); i++) {
 
-                    angle = atan2((corners[0][0].y - corners[0][2].y), (corners[0][2].x - corners[0][0].x)) * 180 / M_PI;
+                    angle = atan2((corners[i][0].y - corners[i][2].y), (corners[i][2].x - corners[i][0].x)) * 180 / M_PI;
                     angle += 45;
 
                     // this is what was causing trouble along with tvecks being a Mat instead of Vec3d as it should be.
-                    pos_x = tvecs[0].val[0];
-                    pos_y = tvecs[0].val[1];
-                    pos_z = tvecs[0].val[2];
+                    pos_x = tvecs[i].val[0];
+                    pos_y = tvecs[i].val[1];
+                    pos_z = tvecs[i].val[2];
 
                     if (fromTop) {
                         //pos_x = pos_x;
@@ -353,18 +352,12 @@ int main(int argc, char *argv[]) {
                         angle = -angle;
                     }
 
-                    printf("Detected marker %d: %f, %f, %f, %f\n", ids[0], pos_x, pos_y, pos_z, angle);
-                    sprintf(buffer, "{\"id\": %d, \"pos\": [%f, %f, %f], \"angle\": %f, \"detect\": true}", ids[0], pos_x, pos_y, pos_z, angle);
+                    printf("Detected marker %d: %f, %f, %f, %f\n", ids[i], pos_x, pos_y, pos_z, angle);
+                    sprintf(buffer, "{\"id\": %d, \"pos\": [%f, %f, %f], \"angle\": %f, \"detect\": true}", ids[i], pos_x, pos_y, pos_z, angle);
                     zmq_send(controller, buffer, strlen(buffer), ZMQ_DONTWAIT);
 
                     if (haslog) {
                         logfile << pos_x << ", " << pos_y << ", " << pos_z << ", " << angle << endl;
-                    }
-                } else {
-                    sprintf(buffer, "{\"pos\": [%f, %f, %f], \"angle\": %f, \"detect\": false}", pos_x, pos_y, pos_z, angle);
-                    //zmq_send(controller, buffer, strlen(buffer), ZMQ_DONTWAIT);
-                    if (haslog) {
-                        logfile << "0, 0, 0, 0" << endl;
                     }
                 }
 
