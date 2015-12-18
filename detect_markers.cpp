@@ -169,7 +169,7 @@ int main(int argc, char *argv[]) {
 
         // Initializing ZMQ
         void *ctx = zmq_ctx_new();
-        void *controller = zmq_socket (ctx, ZMQ_PUSH);
+        void *controller = zmq_socket (ctx, ZMQ_PUB);
         int rc = zmq_bind (controller, "tcp://*:7777");
         assert (rc == 0);
 
