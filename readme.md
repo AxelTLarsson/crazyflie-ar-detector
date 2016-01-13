@@ -28,6 +28,26 @@ the configuration
 
 The marker can be taped under a Crazyflie breakout, prototyping deck or motor holder.
 
+### Aruco board creation
+
+1. Go to the cloned ```opencv_contrib``` repo; ```opencv_contrib/modules/aruco/samples```
+1. The existing ```CMakeLists.txt``` does not work out of the box for some reason, therefore replace the contents of that file with: 
+```
+cmake_minimum_required(VERSION 2.8)
+project( calibrate_camera_charuco)
+find_package( OpenCV REQUIRED )
+add_executable( calibrate_camera_charuco calibrate_camera_charuco.cpp )
+add_executable( create_board_charuco create_board_charuco.cpp )
+
+target_link_libraries( calibrate_camera_charuco ${OpenCV_LIBS} )
+target_link_libraries( create_board_charuco ${OpenCV_LIBS} )
+```
+3. ```mkdir build && cd build && cmake .. && make```
+
+Create a charuco board:
+```./create_board_charuco -o board.png -w 5 -h 10 -sl 50 -ml 30 -d 9 -si```
+Then print the created board.png image to a piece of paper.
+
 Compilation
 -----------
 
@@ -44,7 +64,7 @@ $ cmake ..
 $ make
 ```
 
-Setting up the camera requires v4l2 tools:
+Setting up the camera in Linux requires v4l2 tools:
 ```
 sudo apt-get install v4l2ucp v4l-utils
 ```
@@ -60,9 +80,15 @@ your camera, we have been using
 [calibrate_camera_charuco](https://github.com/Itseez/opencv_contrib/blob/master/modules/aruco/samples/calibrate_camera_charuco.cpp).
 
 
-Launch the detector with the configuration (-ci 1 opens /dev/video1):
+#### Use the new configuration
+1. Put the generated camera config file in the ```extra``` dir.
+1. Edit ```extra/config.yml``` to use the new camera configuration file.
+1. Build the project:
 ```
-$ ./detect_markers -conf ../extra/config.yml -ci 1
+mkdir
+cd build
+cmake ..
+make
 ```
 
 Setup the camera:
@@ -75,6 +101,13 @@ $ v4l2ucp /dev/video1
 The camera can be placed on above or bellow the Crazyflie. Set the configuration
 "camera_top" to 0 to place the camera bellow. The camera is expected to look straight at the ceiling
 or the floor (ie. aligned with the Z axis).
+
+Calibrate the camera:
+`cd <path to opencv_contrib/modules/aruco/samples>`
+`./calibrate_camera_charuco -o cameraparams.txt -w 5 -h 10 -sl 50 -ml 30 -d 9`
+
+Run: `./detect_markers -conf ../extra/config.yml -ci 0`. The option `-ci` selects the camera interface.
+
 
 Compile OpenCV3
 ---------------
